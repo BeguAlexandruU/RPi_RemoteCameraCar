@@ -10,11 +10,11 @@ from circuitpython_nrf24l01.rf24 import RF24
 # SPI_BUS va folosi automat SCK (GPIO 11), MOSI (GPIO 10), MISO (GPIO 9)
 spi = board.SPI()
 
-# Definim pinii CE și CSN folosind DigitalInOut (pentru control rapid)
-# CSN la GPIO 8 (Pin fizic 24 - CE0)
-# CE la GPIO 17 (Pin fizic 11) - Poți schimba dacă ai legat altundeva
-csn_pin = digitalio.DigitalInOut(board.D5)
-ce_pin = digitalio.DigitalInOut(board.D8)
+# Definim pinii CE și CSN:
+# CSN (Chip Select Not) ar trebui să fie GPIO 8 (Pin fizic 24 - CE0)
+csn_pin = digitalio.DigitalInOut(board.D8)
+# CE (Chip Enable) este GPIO 17 (Pin fizic 11) - Pin de control
+ce_pin = digitalio.DigitalInOut(board.D17)
 
 # Inițializăm NRF24L01
 nrf = RF24(spi, csn_pin, ce_pin)
