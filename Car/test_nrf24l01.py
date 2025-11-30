@@ -13,8 +13,8 @@ spi = board.SPI()
 # Definim pinii CE și CSN folosind DigitalInOut (pentru control rapid)
 # CSN la GPIO 8 (Pin fizic 24 - CE0)
 # CE la GPIO 17 (Pin fizic 11) - Poți schimba dacă ai legat altundeva
-csn_pin = digitalio.DigitalInOut(board.D8)
-ce_pin = digitalio.DigitalInOut(board.D17)
+csn_pin = digitalio.DigitalInOut(board.D5)
+ce_pin = digitalio.DigitalInOut(board.D8)
 
 # Inițializăm NRF24L01
 nrf = RF24(spi, csn_pin, ce_pin)
