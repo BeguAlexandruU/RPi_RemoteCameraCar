@@ -47,7 +47,7 @@ if __name__ == "__main__":
     nrf.set_address_bytes(len(address))
 
     # Listen on the address specified as parameter
-    nrf.open_reading_pipe(RF24_RX_ADDR.P1, address)
+    nrf.open_reading_pipe(RF24_RX_ADDR.P1, b'Pico1')
     
     # Display the content of NRF24L01 device registers.
     nrf.show_registers()
@@ -78,11 +78,11 @@ if __name__ == "__main__":
 
                 # If the length of the message is 9 bytes and the first byte is 0x01, then we try to interpret the bytes
                 # sent as an example message holding a temperature and humidity sent from the "simple-sender.py" program.
-                if len(payload) == 9 and payload[0] == 0x01:
-                    values = struct.unpack("bbbb", payload)
-                    j1_x, j1_y, j2_x, j2_y = values
-                    print(f"  Protocol 1: Joystick 1 X: {j1_x}, Y: {j1_y}; Joystick 2 X: {j2_x}, Y: {j2_y}")
-                
+                # if len(payload) == 9 and payload[0] == 0x01:
+                values = struct.unpack("bbbb", payload)
+                j1_x, j1_y, j2_x, j2_y = values
+                print(f"  Protocol 1: Joystick 1 X: {j1_x}, Y: {j1_y}; Joystick 2 X: {j2_x}, Y: {j2_y}")
+            
             # Sleep 100 ms.
             # time.sleep(0.1)
     except:
