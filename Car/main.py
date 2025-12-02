@@ -6,7 +6,8 @@ import time
 import traceback
 
 import pigpio
-from gpiozero import Motor, Servo
+from gpiozero import Motor, AngularServo
+from gpiozero.pins.pigpio import PiGPIOFactory
 from nrf24 import *
 
 HOSTNAME = "localhost"
@@ -36,8 +37,9 @@ def setup():
     motor_right = Motor(forward=23, backward=24, enable=25)
     
     # Initialize Camera Servos
-    camera_servo_hor = Servo(21)  
-    camera_servo_ver = Servo(20)  
+    factory = PiGPIOFactory()
+    camera_servo_hor = AngularServo(21, min_pulse_width=0.5/1000, max_pulse_width=2.5/1000, pin_factory=factory)  
+    camera_servo_ver = AngularServo(20, min_pulse_width=0.5/1000, max_pulse_width=2.5/1000, pin_factory=factory)  
     
     print("Setup complete.")
 
