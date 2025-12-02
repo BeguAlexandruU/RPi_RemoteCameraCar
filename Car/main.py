@@ -27,8 +27,8 @@ DEAD_ZONE = 3    # New: Ignore joystick values between -5 and 5. This "saves" th
 SMOOTH_FACTOR = 0.05  # New: Lower value = smoother/slower movement (e.g., 0.1 to 0.5)
 
 # Initialize current servo positions to prevent jumping on startup
-current_x_value = 0.5 # Servo value range: 0.0 to 1.0 (center)
-current_y_value = 0.5
+current_x_value = 0.0 # Servo value range: -1.0 to 1.0 (center)
+current_y_value = 0.0
 
 def setup():
     global nrf, camera_servo_hor, camera_servo_ver, motor_left, motor_right
@@ -86,15 +86,15 @@ def set_camera_servo_input(hor_pos, ver_pos):
     global current_x_value, current_y_value, camera_servo_hor, camera_servo_ver
     
     if abs(hor_pos) >= DEAD_ZONE:
-        # 1. Map the joystick value (-100 to 100) to the target servo range (0.0 to 1.0)
-        target_x_value = (hor_pos + 100) / 200 
+        # 1. Map the joystick value (-100 to 100) to the target servo range (-1.0 to 1.0)
+        target_x_value = hor_pos / 100.0
         
         # 2. Smooth the movement (Interpolation)
         current_x_value += (target_x_value - current_x_value) * SMOOTH_FACTOR
     
     # --- Y-Axis Logic ---
     if abs(ver_pos) >= DEAD_ZONE:
-        target_y_value = (ver_pos + 100) / 200
+        target_y_value = ver_pos / 100.0
         current_y_value += (target_y_value - current_y_value) * SMOOTH_FACTOR
 
     # # --- Apply New Positions ---
