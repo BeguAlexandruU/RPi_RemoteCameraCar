@@ -85,21 +85,28 @@ def set_motor_speed(left_speed, right_speed):
 def set_camera_servo_input(hor_pos, ver_pos):
     global current_x_value, current_y_value, camera_servo_hor, camera_servo_ver
     
-    if abs(hor_pos) >= DEAD_ZONE:
-        # 1. Map the joystick value (-100 to 100) to the target servo range (-1.0 to 1.0)
-        target_x_value = hor_pos / 100.0
-        
-        # 2. Smooth the movement (Interpolation)
-        current_x_value += (target_x_value - current_x_value) * SMOOTH_FACTOR
     
-    # --- Y-Axis Logic ---
-    if abs(ver_pos) >= DEAD_ZONE:
-        target_y_value = ver_pos / 100.0
-        current_y_value += (target_y_value - current_y_value) * SMOOTH_FACTOR
+    target_x_value = hor_pos / 100.0
+    target_y_value = ver_pos / 100.0
+    
+    camera_servo_hor.value = target_x_value
+    camera_servo_ver.value = target_y_value
+    
+    # if abs(hor_pos) >= DEAD_ZONE:
+    #     # 1. Map the joystick value (-100 to 100) to the target servo range (-1.0 to 1.0)
+    #     target_x_value = hor_pos / 100.0
+        
+    #     # 2. Smooth the movement (Interpolation)
+    #     current_x_value += (target_x_value - current_x_value) * SMOOTH_FACTOR
+    
+    # # --- Y-Axis Logic ---
+    # if abs(ver_pos) >= DEAD_ZONE:
+    #     target_y_value = ver_pos / 100.0
+    #     current_y_value += (target_y_value - current_y_value) * SMOOTH_FACTOR
 
-    # # --- Apply New Positions ---
-    camera_servo_hor.value = current_x_value
-    camera_servo_ver.value = current_y_value
+    # # # --- Apply New Positions ---
+    # camera_servo_hor.value = current_x_value
+    # camera_servo_ver.value = current_y_value
 
   
   
