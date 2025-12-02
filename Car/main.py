@@ -33,7 +33,7 @@ def setup():
     nrf.open_reading_pipe(RF24_RX_ADDR.P1, NRF_RX_ADDRESS) # type: ignore
     
     # Initialize Motors
-    motor_left = Motor(forward=15, backward=18, enable=14)
+    motor_left = Motor(forward=18, backward=15, enable=14)
     motor_right = Motor(forward=23, backward=24, enable=25)
     
     # Initialize Camera Servos
@@ -84,7 +84,7 @@ def set_camera_servo_input(hor_pos, ver_pos):
         # Map [-100,100] -> [-90,90]
         return v * 0.9
 
-    hor_angle = map_to_angle(hor_pos)
+    hor_angle = map_to_angle(hor_pos * -1)
     ver_angle = map_to_angle(ver_pos)
 
     # Assign angles (degrees)
