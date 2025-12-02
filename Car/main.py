@@ -28,9 +28,9 @@ def setup():
     print("Setting up NRF24L01, Motors, and Camera Servos...")
     
     # Initialize NRF24L01
-    nrf = NRF24(pi, ce=7, payload_size=4, channel=108, data_rate=RF24_DATA_RATE.RATE_250KBPS, pa_level=1)
+    nrf = NRF24(pi, ce=7, payload_size=4, channel=108, data_rate=RF24_DATA_RATE.RATE_250KBPS, pa_level=1) # type: ignore
     nrf.set_address_bytes(len(NRF_RX_ADDRESS))
-    nrf.open_reading_pipe(RF24_RX_ADDR.P1, NRF_RX_ADDRESS)
+    nrf.open_reading_pipe(RF24_RX_ADDR.P1, NRF_RX_ADDRESS) # type: ignore
     
     # Initialize Motors
     motor_left = Motor(forward=15, backward=18, enable=14)
@@ -42,6 +42,20 @@ def setup():
     camera_servo_ver = AngularServo(20, min_pulse_width=0.5/1000, max_pulse_width=2.5/1000, pin_factory=factory)  
     
     print("Setup complete.")
+
+def set_motor_input(x_axis, y_axis):
+    # y_axis: forward/backward
+    # x_axis: left/right
+    
+    left_speed = y_axis + x_axis
+    right_speed = y_axis - x_axis
+    
+    
+    # Clamp speeds to [-100, 100]
+    left_speed = max(-100, min(100, left_speed))
+    right_speed = max(-100, min(100, right_speed))
+    
+    set_motor_speed(left_speed, right_speed)
 
 def set_motor_speed(left_speed, right_speed):
     # Set left motor speed
@@ -60,7 +74,7 @@ def set_motor_speed(left_speed, right_speed):
     else:
         motor_right.stop()
 
-def set_camera_servo(hor_pos, ver_pos):
+def set_camera_servo_input(hor_pos, ver_pos):
     def map_to_angle(v):
         # clamp
         if v < -100:
@@ -106,9 +120,9 @@ if __name__ == "__main__":
         
                 print(f"Received - J1_X: {j1_x}, J1_Y: {j1_y}, J2_X: {j2_x}, J2_Y: {j2_y}")
                 
-                set_camera_servo(j1_x, j1_y)
+                set_camera_servo_input(j1_x, j1_y)
                 
-                set_motor_speed(j2_y, j2_x)
+                set_motor_input(j2_x, j2_y)
                 
                 
             # Sleep 100 ms.
