@@ -65,8 +65,8 @@ def set_camera_servo(hor_pos, ver_pos):
             v = -100
         if v > 100:
             v = 100
-        # shift to 0..200 then scale to 0..180
-        return (v + 100) * 180.0 / 200.0
+        # Map [-100,100] -> [-90,90]
+        return v * 0.9
 
     hor_angle = map_to_angle(hor_pos)
     ver_angle = map_to_angle(ver_pos)

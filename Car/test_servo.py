@@ -16,8 +16,8 @@ def set_servo_pos(hor_val, ver_val):
             v = -100
         if v > 100:
             v = 100
-        # shift to 0..200 then scale to 0..180
-        return (v + 100) * 180.0 / 200.0
+        # Map [-100,100] -> [-90,90]
+        return v * 0.9
 
     hor_angle = map_to_angle(hor_val)
     ver_angle = map_to_angle(ver_val)
@@ -29,6 +29,6 @@ def set_servo_pos(hor_val, ver_val):
 while True:
     for pos in range(-100, 101, 20):
         set_servo_pos(pos, pos)
-        mapped = (pos + 100) * 180.0 / 200.0
+        mapped = pos * 0.9
         print(f"Setting servos raw: {pos} -> mapped angle: {mapped:.1f}°")
         sleep(0.5)
