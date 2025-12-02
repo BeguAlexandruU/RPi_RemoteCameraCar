@@ -85,46 +85,27 @@ def set_motor_speed(left_speed, right_speed):
 def set_camera_servo_input(hor_pos, ver_pos):
     global current_x_value, current_y_value, camera_servo_hor, camera_servo_ver
     
+    # --- X-Axis Logic ---
+    if abs(hor_pos) >= DEAD_ZONE:
+        # Map joystick [-100,100] to servo value [-1.0,1.0]
+        target_x_value = hor_pos / 100.0
+        # Smooth interpolation
+        current_x_value += (target_x_value - current_x_value) * SMOOTH_FACTOR
     
-    target_x_value = hor_pos / 100.0
-    target_y_value = ver_pos / 100.0
+    # --- Y-Axis Logic ---
+    if abs(ver_pos) >= DEAD_ZONE:
+        target_y_value = ver_pos / 100.0
+        # Smooth interpolation
+        current_y_value += (target_y_value - current_y_value) * SMOOTH_FACTOR
     
-    camera_servo_hor.value = target_x_value
-    camera_servo_ver.value = target_y_value
+    # Clamp values to [-1.0, 1.0] range
+    current_x_value = max(-1.0, min(1.0, current_x_value))
+    current_y_value = max(-1.0, min(1.0, current_y_value))
     
-    # if abs(hor_pos) >= DEAD_ZONE:
-    #     # 1. Map the joystick value (-100 to 100) to the target servo range (-1.0 to 1.0)
-    #     target_x_value = hor_pos / 100.0
-        
-    #     # 2. Smooth the movement (Interpolation)
-    #     current_x_value += (target_x_value - current_x_value) * SMOOTH_FACTOR
-    
-    # # --- Y-Axis Logic ---
-    # if abs(ver_pos) >= DEAD_ZONE:
-    #     target_y_value = ver_pos / 100.0
-    #     current_y_value += (target_y_value - current_y_value) * SMOOTH_FACTOR
+    # Apply to servos
+    camera_servo_hor.value = current_x_value
+    camera_servo_ver.value = current_y_value
 
-    # # # --- Apply New Positions ---
-    # camera_servo_hor.value = current_x_value
-    # camera_servo_ver.value = current_y_value
-
-  
-  
-    # def map_to_angle(v):
-    #     # clamp
-    #     if v < -100:
-    #         v = -100
-    #     if v > 100:
-    #         v = 100
-    #     # Map [-100,100] -> [-90,90]
-    #     return v * 0.9
-
-    # hor_angle = map_to_angle(current_x_value * -1)
-    # ver_angle = map_to_angle(current_y_value)
-
-    # # Assign angles (degrees)
-    # camera_servo_hor.angle = hor_angle
-    # camera_servo_ver.angle = ver_angle
     
     
 if __name__ == "__main__":
