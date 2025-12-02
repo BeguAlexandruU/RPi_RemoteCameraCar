@@ -59,9 +59,23 @@ def set_motor_speed(left_speed, right_speed):
         motor_right.stop()
 
 def set_camera_servo(hor_pos, ver_pos):
-    camera_servo_hor.value = hor_pos / 100  
-    camera_servo_ver.value = ver_pos / 100
+    def map_to_angle(v):
+        # clamp
+        if v < -100:
+            v = -100
+        if v > 100:
+            v = 100
+        # shift to 0..200 then scale to 0..180
+        return (v + 100) * 180.0 / 200.0
 
+    hor_angle = map_to_angle(hor_pos)
+    ver_angle = map_to_angle(ver_pos)
+
+    # Assign angles (degrees)
+    camera_servo_hor.angle = hor_angle
+    camera_servo_ver.angle = ver_angle
+    
+    
 if __name__ == "__main__":
     
     # Connect to pigpiod
