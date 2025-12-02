@@ -1,4 +1,4 @@
-from time import time
+import time
 from gpiozero import Motor
 
 motor_left = Motor(forward=15, backward=18, enable=14)
