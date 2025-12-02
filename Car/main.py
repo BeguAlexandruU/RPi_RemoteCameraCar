@@ -22,6 +22,14 @@ camera_servo_ver = None
 motor_left = None
 motor_right = None
 
+# --- Control Variables ---
+DEAD_ZONE = 3    # New: Ignore joystick values between -5 and 5. This "saves" the position.
+SMOOTH_FACTOR = 0.05  # New: Lower value = smoother/slower movement (e.g., 0.1 to 0.5)
+
+# Initialize current servo positions to prevent jumping on startup
+servo_x_value = 0.5 # Servo value range: 0.0 to 1.0 (center)
+servo_y_value = 0.5
+
 def setup():
     global nrf, camera_servo_hor, camera_servo_ver, motor_left, motor_right
     
@@ -47,8 +55,8 @@ def set_motor_input(x_axis, y_axis):
     # y_axis: forward/backward
     # x_axis: left/right
     
-    left_speed = y_axis + x_axis
-    right_speed = y_axis - x_axis
+    left_speed = y_axis + (x_axis * 0.5)
+    right_speed = y_axis - (x_axis * 0.5)
     
     
     # Clamp speeds to [-100, 100]
@@ -75,6 +83,24 @@ def set_motor_speed(left_speed, right_speed):
         motor_right.stop()
 
 def set_camera_servo_input(hor_pos, ver_pos):
+    if abs(hor_pos) >= DEAD_ZONE:
+        # 1. Map the joystick value (-100 to 100) to the target servo range (0.0 to 1.0)
+        target_x_value = (hor_pos + 100) / 200 
+        
+        # 2. Smooth the movement (Interpolation)
+        current_x_value += (target_x_value - current_x_value) * SMOOTH_FACTOR
+    
+    # --- Y-Axis Logic ---
+    if abs(ver_pos) >= DEAD_ZONE:
+        target_y_value = (ver_pos + 100) / 200
+        current_y_value += (target_y_value - current_y_value) * SMOOTH_FACTOR
+
+    # # --- Apply New Positions ---
+    # servo_x.value = current_x_value
+    # servo_y.value = current_y_value
+
+  
+  
     def map_to_angle(v):
         # clamp
         if v < -100:
@@ -84,8 +110,8 @@ def set_camera_servo_input(hor_pos, ver_pos):
         # Map [-100,100] -> [-90,90]
         return v * 0.9
 
-    hor_angle = map_to_angle(hor_pos * -1)
-    ver_angle = map_to_angle(ver_pos)
+    hor_angle = map_to_angle(current_x_value * -1)
+    ver_angle = map_to_angle(current_y_value)
 
     # Assign angles (degrees)
     camera_servo_hor.angle = hor_angle
