@@ -108,6 +108,8 @@ if __name__ == "__main__":
                 
                 set_camera_servo(j1_x, j1_y)
                 
+                set_motor_speed(j2_y, j2_x)
+                
                 
             # Sleep 100 ms.
             # time.sleep(0.1)
