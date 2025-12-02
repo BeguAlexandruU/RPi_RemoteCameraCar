@@ -36,8 +36,8 @@ def setup():
     motor_right = Motor(forward=23, backward=24, enable=25)
     
     # Initialize Camera Servos
-    camera_servo_hor = Servo(5)  
-    camera_servo_ver = Servo(6)  
+    camera_servo_hor = Servo(21)  
+    camera_servo_ver = Servo(20)  
     
     print("Setup complete.")
 
