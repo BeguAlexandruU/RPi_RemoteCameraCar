@@ -3,6 +3,7 @@ import struct  # Required to pack data into bytes
 from picozero import LED, Button
 import nrf24l01
 from time import sleep
+import asyncio
 
 
 NRF_RX_ADDRESS = b"Pico1"
@@ -38,12 +39,8 @@ def setup():
     j2_y_adc = ADC(Pin(26))
     
     # Initialize Buttons
-    # j1_button = Button(7)
-    # j2_button = Button(15)
-    # j1_button.when_released = lambda: send_button_notification(1)
-    # j2_button.when_released = lambda: send_button_notification(2)
-    j1_button = Pin(7, Pin.IN, Pin.PULL_UP)
-    j2_button = Pin(15, Pin.IN, Pin.PULL_UP)
+    j1_button = Button(7)
+    j2_button = Button(15)
 
     # Initialize LEDs
     led_green = LED(0)
@@ -51,7 +48,7 @@ def setup():
     
     print("Setup complete.")
 
-def send_button_notification(button_id):
+async def send_button_notification(button_id):
     global nrf
     
     # Send special packet for button press: (button_id, 127, 127, 127)
@@ -90,7 +87,7 @@ def map_range(value):
     # Map the value
     return (value - in_min) * (out_max - out_min) // span + out_min
 
-def send_data(data):
+async def send_data(data):
     global nrf
     
     if data['type'] == 'joystick':
@@ -104,36 +101,23 @@ def send_data(data):
     try:
         # success
         nrf.send(payload)
+        
+        # waiting for transmission to complete
+        await asyncio.sleep(0.01)
+        
         set_leds(green_on=True, red_on=False)
     except OSError:
         # failure
         print("Error: NRF24L01 Send Failed")
         set_leds(green_on=False, red_on=True)
 
-if __name__ == "__main__":
-    setup()
-    
-    print("Starting main loop...")
-    j1_button_prev = 0
-    j2_button_prev = 0
-    
+async def read_joystick():
     while True:
         # Read joystick values
         j1_x = map_range(j1_x_adc.read_u16())
         j1_y = map_range(j1_y_adc.read_u16())
         j2_x = map_range(j2_x_adc.read_u16())
         j2_y = map_range(j2_y_adc.read_u16())
-        
-        # Check for button presses
-        if j1_button.value() == 1 and j1_button_prev == 0:
-            print("J1 Button Pressed")
-            send_button_notification(1)
-        j1_button_prev = j1_button.value()
-        
-        if j2_button.value() == 1 and j2_button_prev == 0:
-            print("J2 Button Pressed")
-            send_button_notification(2)
-        j2_button_prev = j2_button.value()
         
         # Prepare data
         data = {
@@ -142,9 +126,31 @@ if __name__ == "__main__":
         }
         
         # Send data
-        send_data(data)
+        await send_data(data)
+        
+        await asyncio.sleep(0.1)  # Sleep for 100 ms
+
+async def button_monitor():
+    global j1_button, j2_button
+    j1_button.when_released = lambda: send_button_notification(1)
+    j2_button.when_released = lambda: send_button_notification(2)
+    
+    while True:
+
+      
+        await asyncio.sleep(0.1)  # Polling interval
+
+# Define the main function to run the event loop
+async def main():
+    setup()
+    
+    asyncio.create_task(read_joystick())
+    asyncio.create_task(button_monitor())
     
 
-
+# Create and run the event loop
+loop = asyncio.get_event_loop()  
+loop.create_task(main())  # Create a task to run the main function
+loop.run_forever()  # Run the event loop indefinitely
 
 
