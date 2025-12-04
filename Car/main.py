@@ -33,8 +33,6 @@ def setup():
     print("Setup complete.")
 
 
-    
-    
 if __name__ == "__main__":
     
     # Connect to pigpiod
@@ -60,13 +58,14 @@ if __name__ == "__main__":
 
                 j1_x, j1_y, j2_x, j2_y = struct.unpack("bbbb", payload)
         
-                print(f"Received - J1_X: {j1_x}, J1_Y: {j1_y}, J2_X: {j2_x}, J2_Y: {j2_y}")
+                # print(f"Received - J1_X: {j1_x}, J1_Y: {j1_y}, J2_X: {j2_x}, J2_Y: {j2_y}")
                 
                 if j1_y == 127 and j2_x == 127 and j2_y == 127:
                     # Button press detected, ignore joystick input for servos
                     if j1_x == 1:
                         state_control.switch_state()
                         print(f"Received: {j1_x}")
+                        state_control.print_state()
                 else:
                     servo_control.set_servo_input(j1_x, j1_y)
                     motor_control.set_motor_input(j2_x, j2_y)

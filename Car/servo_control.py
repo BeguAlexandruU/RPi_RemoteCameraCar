@@ -11,6 +11,9 @@ SMOOTH_FACTOR = 0.03  # New: Lower value = smoother/slower movement (e.g., 0.1 t
 # bottom vertical limit
 Y_LIMIT_BOTTOM = -0.5
 
+Y_AXIS_INVERT = False
+X_AXIS_INVERT = False
+
 # Initialize current servo positions to prevent jumping on startup
 current_x_value = 0.0 # Servo value range: -1.0 to 1.0 (center)
 current_y_value = 0.0 # Servo value range: -1.0 to 1.0 (center)
@@ -24,6 +27,13 @@ def setup():
 
 def set_servo_input(hor_pos, ver_pos):
     global current_x_value, current_y_value, camera_servo_hor, camera_servo_ver
+    
+    # Apply inversion settings
+    if X_AXIS_INVERT:
+        hor_pos = -hor_pos
+    
+    if Y_AXIS_INVERT:
+        ver_pos = -ver_pos
     
     # --- X-Axis Logic ---
     if abs(hor_pos) >= DEAD_ZONE:

@@ -27,6 +27,7 @@ def set_motor_input(x_axis, y_axis):
 def set_motor_speed(left_speed, right_speed):
     # Apply speed limit from current state
     speed_limit = get_speed_limit()
+    print(f"Speed Limit: {speed_limit}")
     
     left_speed = (left_speed / 100.0) * speed_limit
     right_speed = (right_speed / 100.0) * speed_limit
