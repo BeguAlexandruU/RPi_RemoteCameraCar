@@ -1,4 +1,3 @@
-from tkinter import N
 from gpiozero import LED, TonalBuzzer
 from time import sleep
 import threading

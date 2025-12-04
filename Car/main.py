@@ -19,7 +19,7 @@ def setup():
     print("Setting up NRF24L01, Motors, and Camera Servos...")
     
     # Initialize NRF24L01
-    nrf24_module.setup()
+    nrf24_module.setup(pi)
     
     # Initialize Motors
     motor_control.setup()
@@ -66,7 +66,7 @@ if __name__ == "__main__":
                     # Button press detected, ignore joystick input for servos
                     if j1_x == 1:
                         state_control.switch_state()
-                        #print(f"Switched State to: {state_control.current_state.name}")
+                        print(f"Received: {j1_x}")
                 else:
                     servo_control.set_servo_input(j1_x, j1_y)
                     motor_control.set_motor_input(j2_x, j2_y)

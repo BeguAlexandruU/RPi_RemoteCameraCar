@@ -5,7 +5,7 @@ NRF_RX_ADDRESS = b"Pico1"
 
 nrf = None
 
-def setup():
+def setup(pi):
     global nrf
     
     print("Setting up NRF24L01...")
