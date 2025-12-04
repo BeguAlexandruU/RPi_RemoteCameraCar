@@ -4,107 +4,34 @@ import struct
 import sys
 import time
 import traceback
-
 import pigpio
-from gpiozero import Motor, AngularServo
-from gpiozero.pins.pigpio import PiGPIOFactory
-from nrf24 import *
+
+import io_control
+import state_control
+import nrf24_module
+import motor_control
+import servo_control
 
 HOSTNAME = "localhost"
 PORT = 8888
-NRF_RX_ADDRESS = b"Pico1"
-
-nrf = None
-
-camera_servo_hor = None
-camera_servo_ver = None
-
-motor_left = None
-motor_right = None
-
-# --- Control Variables ---
-DEAD_ZONE = 3    # New: Ignore joystick values between -5 and 5. This "saves" the position.
-SMOOTH_FACTOR = 0.05  # New: Lower value = smoother/slower movement (e.g., 0.1 to 0.5)
-
-# Initialize current servo positions to prevent jumping on startup
-current_x_value = 0.0 # Servo value range: -1.0 to 1.0 (center)
-current_y_value = 0.0
 
 def setup():
-    global nrf, camera_servo_hor, camera_servo_ver, motor_left, motor_right
-    
     print("Setting up NRF24L01, Motors, and Camera Servos...")
     
     # Initialize NRF24L01
-    nrf = NRF24(pi, ce=7, payload_size=4, channel=108, data_rate=RF24_DATA_RATE.RATE_250KBPS, pa_level=1) # type: ignore
-    nrf.set_address_bytes(len(NRF_RX_ADDRESS))
-    nrf.open_reading_pipe(RF24_RX_ADDR.P1, NRF_RX_ADDRESS) # type: ignore
+    nrf24_module.setup()
     
     # Initialize Motors
-    motor_left = Motor(forward=18, backward=15, enable=14)
-    motor_right = Motor(forward=23, backward=24, enable=25)
+    motor_control.setup()
     
     # Initialize Camera Servos
-    factory = PiGPIOFactory()
-    camera_servo_hor = AngularServo(21, min_pulse_width=0.5/1000, max_pulse_width=2.5/1000, pin_factory=factory)  
-    camera_servo_ver = AngularServo(20, min_pulse_width=0.5/1000, max_pulse_width=2.5/1000, pin_factory=factory)  
+    servo_control.setup()
+    
+    # Indicate setup complete
+    io_control.setup()
     
     print("Setup complete.")
 
-def set_motor_input(x_axis, y_axis):
-    # y_axis: forward/backward
-    # x_axis: left/right
-    
-    left_speed = y_axis + (x_axis * 0.5)
-    right_speed = y_axis - (x_axis * 0.5)
-    
-    
-    # Clamp speeds to [-100, 100]
-    left_speed = max(-100, min(100, left_speed))
-    right_speed = max(-100, min(100, right_speed))
-    
-    set_motor_speed(left_speed, right_speed)
-
-def set_motor_speed(left_speed, right_speed):
-    # Set left motor speed
-    if left_speed > 0:
-        motor_left.forward(left_speed / 100)
-    elif left_speed < 0:
-        motor_left.backward(-left_speed / 100)
-    else:
-        motor_left.stop()
-    
-    # Set right motor speed
-    if right_speed > 0:
-        motor_right.forward(right_speed / 100)
-    elif right_speed < 0:
-        motor_right.backward(-right_speed / 100)
-    else:
-        motor_right.stop()
-
-def set_camera_servo_input(hor_pos, ver_pos):
-    global current_x_value, current_y_value, camera_servo_hor, camera_servo_ver
-    
-    # --- X-Axis Logic ---
-    if abs(hor_pos) >= DEAD_ZONE:
-        # Map joystick [-100,100] to servo value [-1.0,1.0]
-        target_x_value = hor_pos / 100.0
-        # Smooth interpolation
-        current_x_value += (target_x_value - current_x_value) * SMOOTH_FACTOR
-    
-    # --- Y-Axis Logic ---
-    if abs(ver_pos) >= DEAD_ZONE:
-        target_y_value = ver_pos / 100.0
-        # Smooth interpolation
-        current_y_value += (target_y_value - current_y_value) * SMOOTH_FACTOR
-    
-    # Clamp values to [-1.0, 1.0] range
-    current_x_value = max(-1.0, min(1.0, current_x_value))
-    current_y_value = max(-1.0, min(1.0, current_y_value))
-    
-    # Apply to servos
-    camera_servo_hor.value = current_x_value
-    camera_servo_ver.value = current_y_value
 
     
     
@@ -121,29 +48,33 @@ if __name__ == "__main__":
 
     # Enter a loop receiving data on the address specified.
     try:
-        print(f'Receive from {NRF_RX_ADDRESS}')
+        print(f'Receive from {nrf24_module.NRF_RX_ADDRESS}')
         while True:
 
             # As long as data is ready for processing, process it.
-            while nrf.data_ready():
+            while nrf24_module.nrf.data_ready():
                 
                 # Read pipe and payload for message.
-                pipe = nrf.data_pipe()
-                payload = nrf.get_payload()    
-
+                pipe = nrf24_module.nrf.data_pipe()
+                payload = nrf24_module.nrf.get_payload()    
 
                 j1_x, j1_y, j2_x, j2_y = struct.unpack("bbbb", payload)
         
                 print(f"Received - J1_X: {j1_x}, J1_Y: {j1_y}, J2_X: {j2_x}, J2_Y: {j2_y}")
                 
-                set_camera_servo_input(j1_x, j1_y)
-                
-                set_motor_input(j2_x, j2_y)
+                if j1_y == 127 and j2_x == 127 and j2_y == 127:
+                    # Button press detected, ignore joystick input for servos
+                    if j1_x == 1:
+                        state_control.switch_state()
+                        #print(f"Switched State to: {state_control.current_state.name}")
+                else:
+                    servo_control.set_servo_input(j1_x, j1_y)
+                    motor_control.set_motor_input(j2_x, j2_y)
                 
                 
             # Sleep 100 ms.
             # time.sleep(0.1)
     except:
         traceback.print_exc()
-        nrf.power_down()
+        nrf24_module.nrf.power_down()
         pi.stop()
