@@ -9,11 +9,12 @@ DEAD_ZONE = 3    # New: Ignore joystick values between -5 and 5. This "saves" th
 SMOOTH_FACTOR = 0.03  # New: Lower value = smoother/slower movement (e.g., 0.1 to 0.5)
 
 # bottom vertical limit
-Y_LIMIT_TOP = -1
+Y_LIMIT_TOP = -0.9
 Y_LIMIT_BOTTOM = 0.2
 
 Y_AXIS_INVERT = True
 X_AXIS_INVERT = True
+Y_AXIS_OFFSET = -0.2
 
 # Initialize current servo positions to prevent jumping on startup
 current_x_value = 0.0 # Servo value range: -1.0 to 1.0 (center)
@@ -45,12 +46,14 @@ def set_servo_input(hor_pos, ver_pos):
     
     # --- Y-Axis Logic ---
     if abs(ver_pos) >= DEAD_ZONE:
-        target_y_value = ver_pos / 100.0
+        target_y_value = ver_pos / 100.0 + Y_AXIS_OFFSET
         # Smooth interpolation
         current_y_value += (target_y_value - current_y_value) * SMOOTH_FACTOR
         # Apply vertical limit
         if current_y_value > Y_LIMIT_BOTTOM:
             current_y_value = Y_LIMIT_BOTTOM
+        if current_y_value < Y_LIMIT_TOP:
+            current_y_value = Y_LIMIT_TOP
     
     # Clamp values to [-1.0, 1.0] range
     current_x_value = max(-1.0, min(1.0, current_x_value))
