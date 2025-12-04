@@ -6,7 +6,7 @@ class CarState(Enum):
 
 # Speed limits per state (0.0 to 1.0)
 STATE_SPEED_LIMITS = {
-    CarState.MANUAL_CONTROL: 0.3,   # 50% max speed
+    CarState.MANUAL_CONTROL: 0.5,   # 50% max speed
     CarState.TOKYO_MODE: 1.0,       # 100% max speed
 }
 

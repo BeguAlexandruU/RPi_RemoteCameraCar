@@ -10,11 +10,11 @@ SMOOTH_FACTOR = 0.03  # New: Lower value = smoother/slower movement (e.g., 0.1 t
 
 # bottom vertical limit
 Y_LIMIT_TOP = -0.9
-Y_LIMIT_BOTTOM = 0.2
+Y_LIMIT_BOTTOM = 0.4
 
 Y_AXIS_INVERT = True
 X_AXIS_INVERT = True
-Y_AXIS_OFFSET = -0.2
+Y_AXIS_OFFSET = -0.4
 
 # Initialize current servo positions to prevent jumping on startup
 current_x_value = 0.0 # Servo value range: -1.0 to 1.0 (center)
