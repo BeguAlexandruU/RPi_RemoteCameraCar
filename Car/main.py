@@ -65,7 +65,7 @@ if __name__ == "__main__":
                     if j1_x == 1:
                         state_control.switch_state()
                         print(f"Received: {j1_x}")
-                        state_control.print_state()
+                        # state_control.print_state()
                 else:
                     servo_control.set_servo_input(j1_x, j1_y)
                     motor_control.set_motor_input(j2_x, j2_y)
