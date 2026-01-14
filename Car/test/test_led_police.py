@@ -1,8 +1,8 @@
-from lib.picozero import LED
+from gpiozero import LED
 from time import sleep
 
-red = LED(29)
-blue = LED(28)
+red = LED(26)
+blue = LED(19)
 
 while True:
     for _ in range(2):
@@ -15,4 +15,5 @@ while True:
         sleep(0.1)
         blue.off()
         sleep(0.1)
-    
+
+
