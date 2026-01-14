@@ -22,7 +22,7 @@ def setup():
     
     print("IO setup complete.")
 
-def start_flash_red_led(interval = 0.5):
+def start_flash_led():
     """Start flashing the red LED continuously."""
     
     print("Started flashing red LED.....")
@@ -30,15 +30,21 @@ def start_flash_red_led(interval = 0.5):
     flashing_red = True
     def flash():
         while flashing_red:
-            red_led.on()
-            sleep(interval)
-            red_led.off()
-            sleep(interval)
+            for _ in range(2):
+                red_led.on()
+                sleep(0.1)
+                red_led.off()
+                sleep(0.1)
+            for _ in range(2):
+                blue_led.on()
+                sleep(0.1)
+                blue_led.off()
+                sleep(0.1)
     threading.Thread(target=flash).start()
     
     print("Started flashing red LED.!")
 
-def stop_flash_red_led():
+def stop_flash_led():
     """Stop flashing the red LED."""
     global flashing_red
     flashing_red = False
