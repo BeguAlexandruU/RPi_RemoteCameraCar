@@ -2,7 +2,7 @@ from gpiozero import TonalBuzzer
 from time import sleep
 
 
-speaker = TonalBuzzer(16)
+speaker = TonalBuzzer(16, pin_factory=None)
 
 
 melody_introduction = ['A#4', 'A#4', 'A#4', 'A#4',]
