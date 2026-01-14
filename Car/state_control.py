@@ -1,5 +1,5 @@
 from enum import Enum
-from io_control import start_flash_led, stop_flash_led
+from io_control import start_flash_led, stop_flash_led, start_melody, stop_melody
 
 class CarState(Enum):
     MANUAL_CONTROL = 0
@@ -19,9 +19,11 @@ def switch_state():
     if current_state == CarState.MANUAL_CONTROL:
         transition_to(CarState.TOKYO_MODE)
         start_flash_led()
+        start_melody()
     else:
         transition_to(CarState.MANUAL_CONTROL)
         stop_flash_led()
+        stop_melody()
 
 def transition_to(new_state):
     global current_state
