@@ -8,6 +8,7 @@ blue_led = None
 speaker = None
 
 def setup():
+    global red_led, blue_led, speaker
     """Initialize all IOs"""
     print("Setting up LEDs and Speaker...")
     red_led = LED(26)      
