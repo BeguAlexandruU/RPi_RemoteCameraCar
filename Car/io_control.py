@@ -6,6 +6,7 @@ import threading
 red_led = None    
 blue_led = None     
 speaker = None
+flashing_red = False
 
 def setup():
     global red_led, blue_led, speaker
@@ -15,25 +16,33 @@ def setup():
     blue_led = LED(19)       
     speaker = TonalBuzzer(16) 
     
-    red_led.on()
-    blue_led.on()
+    red_led.off()
+    blue_led.off()
     speaker.stop()
     
-    flash_red_led()
     print("IO setup complete.")
 
-def flash_red_led(interval = 0.5):
-    """Flash the red LED a specified number of times."""
+def start_flash_red_led(interval = 0.5):
+    """Start flashing the red LED continuously."""
+    global flashing_red, red_led
+    flashing_red = True
     def flash():
-        while True:
+        while flashing_red:
             red_led.on()
             sleep(interval)
             red_led.off()
             sleep(interval)
     threading.Thread(target=flash).start()
 
+def stop_flash_red_led():
+    """Stop flashing the red LED."""
+    global flashing_red
+    flashing_red = False
+
 def stop_all():
     """Turn off all IOs"""
+    global flashing_red
+    flashing_red = False
     red_led.off()
     blue_led.off()
     speaker.stop()
