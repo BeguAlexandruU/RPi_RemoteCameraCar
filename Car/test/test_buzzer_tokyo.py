@@ -2,7 +2,7 @@ from lib.picozero import Speaker
 from time import sleep
 
 
-speaker = Speaker(29)
+speaker = Speaker(0)
 
 
 melody_introduction = ['a#4', 'a#4', 'a#4', 'a#4',]
@@ -55,7 +55,7 @@ try:
     while(True):
       for note in liten_mus:
           speaker.play(note)
-          sleep(0.04) # leave a gap between notes
+          sleep(0.04)
     
     
 finally: # Turn speaker off if interrupted

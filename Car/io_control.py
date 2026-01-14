@@ -10,12 +10,12 @@ speaker = None
 def setup():
     """Initialize all IOs"""
     print("Setting up LEDs and Speaker...")
-    red_led = LED(17)      
-    blue_led = LED(27)       
-    speaker = TonalBuzzer(22) 
+    red_led = LED(26)      
+    blue_led = LED(19)       
+    speaker = TonalBuzzer(16) 
     
-    red_led.off()
-    blue_led.off()
+    red_led.on()
+    blue_led.on()
     speaker.stop()
     print("IO setup complete.")
 
