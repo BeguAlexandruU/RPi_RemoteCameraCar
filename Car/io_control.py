@@ -17,12 +17,14 @@ def setup():
     red_led.on()
     blue_led.on()
     speaker.stop()
+    
+    flash_red_led()
     print("IO setup complete.")
 
-def flash_red_led(times, interval):
+def flash_red_led(interval = 0.5):
     """Flash the red LED a specified number of times."""
     def flash():
-        for _ in range(times):
+        while True:
             red_led.on()
             sleep(interval)
             red_led.off()
