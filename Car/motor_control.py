@@ -55,3 +55,4 @@ def stop_motors():
     """Immediately stop both motors (fail-safe)"""
     motor_left.stop()
     motor_right.stop()
+    print("Motors stopped (fail-safe).")
