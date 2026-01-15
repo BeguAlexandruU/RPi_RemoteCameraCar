@@ -7,7 +7,7 @@ motor_right = None
 
 def setup():
     global motor_left, motor_right
-    motor_left = Motor(forward=18, backward=15, enable=14)
+    motor_left = Motor(forward=18, backward=17, enable=14)
     motor_right = Motor(forward=23, backward=24, enable=25)
 
 def set_motor_input(x_axis, y_axis):
