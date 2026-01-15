@@ -32,17 +32,17 @@ def set_motor_speed(left_speed, right_speed):
     right_speed = (right_speed / 100.0) * speed_limit
     
     # Set left motor speed
-    if left_speed > 10:
+    if left_speed > 0.1:
         motor_left.forward(left_speed)
-    elif left_speed < 10:
+    elif left_speed < 0.1:
         motor_left.backward(-left_speed)
     else:
         motor_left.stop()
     
     # Set right motor speed
-    if right_speed > 10:
+    if right_speed > 0.1:
         motor_right.forward(right_speed)
-    elif right_speed < 10:
+    elif right_speed < 0.1:
         motor_right.backward(-right_speed)
     else:
         motor_right.stop()
