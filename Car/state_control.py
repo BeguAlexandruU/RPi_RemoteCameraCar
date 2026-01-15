@@ -18,12 +18,14 @@ def switch_state():
     global current_state
     if current_state == CarState.MANUAL_CONTROL:
         transition_to(CarState.TOKYO_MODE)
-        start_flash_led()
-        start_melody()
+        
+        # start_flash_led()
+        # start_melody()
     else:
         transition_to(CarState.MANUAL_CONTROL)
-        stop_flash_led()
-        stop_melody()
+        
+        # stop_flash_led()
+        # stop_melody()
 
 def transition_to(new_state):
     global current_state

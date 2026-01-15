@@ -30,7 +30,7 @@ def setup():
     servo_control.setup()
     
     # Indicate setup complete
-    io_control.setup()
+    # io_control.setup()
     
     print("Setup complete.")
 
