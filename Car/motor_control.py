@@ -31,11 +31,15 @@ def set_motor_speed(left_speed, right_speed):
     left_speed = (left_speed / 100.0) * speed_limit
     right_speed = (right_speed / 100.0) * speed_limit
     
+    # Clamp speeds to [-1, 1] for motor controller
+    left_speed = max(-1.0, min(1.0, left_speed))
+    right_speed = max(-1.0, min(1.0, right_speed))
+    
     # Set left motor speed
     if left_speed > 0:
         motor_left.forward(left_speed)
     elif left_speed < 0:
-        motor_left.backward(left_speed)
+        motor_left.backward(-left_speed)
     else:
         motor_left.stop()
     
@@ -43,7 +47,7 @@ def set_motor_speed(left_speed, right_speed):
     if right_speed > 0:
         motor_right.forward(right_speed)
     elif right_speed < 0:
-        motor_right.backward(right_speed)
+        motor_right.backward(-right_speed)
     else:
         motor_right.stop()
 
