@@ -14,6 +14,8 @@ import servo_control
 
 HOSTNAME = "localhost"
 PORT = 8888
+CONNECTION_TIMEOUT = 1.0  # Stop motors if no data for 2 seconds
+last_data_time = None
 
 def setup():
     print("Setting up NRF24L01, Motors, and Camera Servos...")
@@ -47,10 +49,12 @@ if __name__ == "__main__":
     # Enter a loop receiving data on the address specified.
     try:
         print(f'Receive from {nrf24_module.NRF_RX_ADDRESS}')
+        last_data_time = time.time()
         while True:
 
             # As long as data is ready for processing, process it.
             while nrf24_module.nrf.data_ready():
+                last_data_time = time.time()  # Update last received time
                 
                 # Read pipe and payload for message.
                 pipe = nrf24_module.nrf.data_pipe()
@@ -69,10 +73,15 @@ if __name__ == "__main__":
                 else:
                     servo_control.set_servo_input(j1_x, j1_y)
                     motor_control.set_motor_input(j2_x, j2_y)
-                
+            
+            # Check for connection timeout (fail-safe)
+            if time.time() - last_data_time > CONNECTION_TIMEOUT:
+                print("WARNING: Connection lost! Stopping motors...")
+                motor_control.stop_motors()
+                last_data_time = time.time()  # Reset timer to avoid repeated messages
                 
             # Sleep 100 ms.
-            # time.sleep(0.1)
+            time.sleep(0.1)
     except:
         traceback.print_exc()
         nrf24_module.nrf.power_down()

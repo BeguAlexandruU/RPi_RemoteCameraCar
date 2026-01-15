@@ -46,3 +46,8 @@ def set_motor_speed(left_speed, right_speed):
         motor_right.backward(-right_speed)
     else:
         motor_right.stop()
+
+def stop_motors():
+    """Immediately stop both motors (fail-safe)"""
+    motor_left.stop()
+    motor_right.stop()
