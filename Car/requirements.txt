@@ -1,0 +1,5 @@
+colorzero==2.0
+gpiozero==2.0.1
+nrf24==2.0.0
+pigpio==1.78
+setuptools==82.0.1
