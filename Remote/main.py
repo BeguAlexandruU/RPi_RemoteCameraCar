@@ -1,8 +1,7 @@
 from machine import Pin, ADC, SPI
 import struct  # Required to pack data into bytes
-from picozero import LED, Button
+from picozero import LED
 import nrf24l01
-from time import sleep
 
 
 NRF_RX_ADDRESS = b"Pico1"

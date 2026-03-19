@@ -6,29 +6,26 @@ A Raspberry Pi-based remote-controlled car with live camera streaming capabiliti
 
 ### Car
 1. Clone the repository: `git clone https://github.com/BeguAlexandruU/RPi_RemoteCameraCar`
-2. Got to the car directory:
-`cd RPi_RemoteCameraCar/Car`
-3. Init the python virtual environment:
-`python -m venv .venv`
-4. Acces the venv: `source .venv/bin/activate`
-5. Install dependencies: `pip install -r requirements.txt`
-3. Configure camera and motor pins in `config.py`
-4. Run the application: `python main.py`
+2. Run the setup script:
+`sudo bash setup_car.sh`
+
+### Camera
+...
 
 ### Remote
 
 1. Clone the repository: `git clone https://github.com/BeguAlexandruU/RPi_RemoteCameraCar`
-2. From Remote folder upload the code to the remote via Thonny app
+2. From `/Remote` folder upload the code to the remote device via Thonny app
 
 ## Usage
 
 ### Car
 
-- 
+To start the car, you have to run the start script `sudo bash start_car.sh`.
 
 ### Remote
 
-- At startup the device will run automaticaly the main.py script.
+At startup the device will run automaticaly the main.py script.
 
 ## License
 
